@@ -6,8 +6,6 @@ require 'json'
 
 module SortingOffice
   class App < Sinatra::Base
-    use Rack::Angerfist, tracker_id: ENV['GA_TRACKER_ID'], domain: ENV['GA_TRACKER_DOMAIN']
-
     before do
       response.headers['Access-Control-Allow-Origin'] = "*"
     end
@@ -36,15 +34,15 @@ module SortingOffice
             locality: address.locality.try(:name),
             town: address.town.try(:name).try(:titleize),
             postcode: address.postcode.try(:name),
-            provenance: address.provenance
+            #provenance: address.provenance
           }
-          SortingOffice::Queue.perform(h) if params[:contribute]
-          h = h.tap do |h|
-            [:street, :locality, :town, :postcode].each do |part|
-              h[part] = add_url(address.send(part))
-            end
-            h.delete(:provenance) if params[:noprov]
-          end
+          #SortingOffice::Queue.perform(h) if params[:contribute]
+          #h = h.tap do |h|
+            #[:street, :locality, :town, :postcode].each do |part|
+             # h[part] = add_url(address.send(part))
+            #end
+            #h.delete(:provenance) if params[:noprov]
+          #end
           h.to_json
         end
       end
