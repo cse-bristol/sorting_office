@@ -28,6 +28,14 @@ task :bootstrap do
   puts "Done!".green
 end
 
+
+namespace :sortingoffice do
+  task :match do
+    print "Normalising data \n" .yellow
+    SortingOffice::Normalise.normalise
+  end
+end
+
 namespace :es do
   task :index do
     print "Indexing localities...".yellow
