@@ -31,7 +31,7 @@ module SortingOffice
     end
 
     def get_town
-      @town = Town.calculate(@address, @postcode.area)
+      #@town = Town.calculate(@address, @postcode.area)
       # Only remove the last instance of the town name (as the town name may be in the street too)
       @address = remove_element(@town) if @town
     end
@@ -101,16 +101,30 @@ module SortingOffice
         # Make the first AON found into the PAON
         @paon = aons.first.last
 
+        # Put flat fix here?
+        if @paon.match(/^Flat\s\d{0,}(\s|\w)\s\w/)
+          @saon = @paon.match(/^Flat\s\d{0,}(\s|\w)/)[0].strip
+          @paon =  @paon.sub(@saon,"").strip
+        elsif words && words.first.match(/^Flat/)
+          @saon = "Flat " + @paon.match(/^\d{0,}(\s|\w)/)[0]
+          @paon = @paon.sub(@paon.match(/^\d{0,}(\s|\w)/)[0],"").strip
+        end
+
         # If the AON isn't on line 0 of the address, then there is a SAON before it
         if aons.first[0] != 0
           @saon = lines.first
         end
+        
       elsif aons.count == 2 # If there is more than one AON
         # The PAON is the second AON we've found, for some reason
         @paon = aons[1].last
         @saon = aons[0].last
-      end
 
+        if words && words.first.match(/^Flat/)
+          @saon = words.first + " " + @saon
+        end
+                  
+      end     
     end
 
     def get_provenance
